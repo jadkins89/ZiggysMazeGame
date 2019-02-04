@@ -70,6 +70,12 @@ void Maze::TakeTurn(Player *p) {
 	else {
 		std::vector<Position> moves = board_->GetMoves(p);
 		int index = rand() % moves.size();
+		while ((board_->get_square_value(moves[index]) == SquareType::Enemy1 ||
+			board_->get_square_value(moves[index]) == SquareType::Enemy2) &&
+			moves.size() > 1) {
+				moves.erase(moves.begin() + index);
+				index = rand() % moves.size();
+		}
 		board_->MovePlayer(p, moves[index]);
 	}
 	// Increment turn unless on last player, then reset
