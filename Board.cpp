@@ -1,8 +1,4 @@
 #include "Board.h"
-#include "Player.h"
-#include <cstdlib> 
-#include <time.h>
-#include <ctime> // For srand()
 
 #define WALL_PROB 20
 #define TRES_PROB 10

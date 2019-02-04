@@ -1,7 +1,6 @@
 #ifndef _MAZE_H_
 #define _MAZE_H_
 
-#include <vector>
 #include "Player.h"
 #include "Board.h"
 
