@@ -15,6 +15,10 @@ struct Position {
 	bool operator!=(const Position &other) {
 		return row != other.row || col != other.col;
 	}
+	std::ostream& operator<<(std::ostream& os) {
+		os << "[" << row << "," << col << "]";
+		return os;
+	}
 };
 
 
