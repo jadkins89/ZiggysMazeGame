@@ -21,13 +21,16 @@ Maze::Maze() {
 }
 
 void Maze::NewGame(Player *human, const int enemies) {
+	// Place human on board
 	Position start = {0,0};
 	human->SetPosition(start);
 	players_.push_back(human);
 	int col = board_->get_cols() - 1;
 
+	// Array of different enemy types
 	SquareType enemy[2] = {SquareType::Enemy1, SquareType::Enemy2};
 
+	// Initialize enemies and place on board
 	for (int i = 0; i < enemies; i++) {
 		std::string name = "Enemy_" + std::to_string(i + 1);
 		Player *new_baddie = new Player(name, false, enemy[i % 2]);
@@ -97,11 +100,14 @@ bool Maze::IsGameOver() const {
 		return true;
 	}
 	Player *human = players_[0];
-	std::vector<Position> moves = board_->GetMoves(human);
-	if (!moves.size()) {
-		std::cout << "NO POSSIBLE MOVES - GAME OVER" << std::endl;
-		return true;
-	}
+
+	// Code no longer necessary since boards are checked for path
+
+	// std::vector<Position> moves = board_->GetMoves(human);
+	// if (!moves.size()) {
+	// 	std::cout << "NO POSSIBLE MOVES - GAME OVER" << std::endl;
+	// 	return true;
+	// }
 
 	for (auto &e : players_) {
 		// Only looking for bad guys
