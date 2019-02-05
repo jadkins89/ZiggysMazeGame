@@ -4,8 +4,8 @@
 #include "Player.h"
 #include <vector>
 
-#define ROW 4
-#define COL 4
+#define ROW 6
+#define COL 6
 
 class Board {
 public:
