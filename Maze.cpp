@@ -27,13 +27,10 @@ void Maze::NewGame(Player *human, const int enemies) {
 	players_.push_back(human);
 	int col = board_->get_cols() - 1;
 
-	// Array of different enemy types
-	SquareType enemy[2] = {SquareType::Enemy1, SquareType::Enemy2};
-
 	// Initialize enemies and place on board
 	for (int i = 0; i < enemies; i++) {
 		std::string name = "Enemy_" + std::to_string(i + 1);
-		Player *new_baddie = new Player(name, false, enemy[i % 2]);
+		Player *new_baddie = new Player(name, false);
 		
 		Position e_start = {0, col - i};
 		new_baddie->SetPosition(e_start);
@@ -51,6 +48,7 @@ void Maze::TakeTurn(Player *p) {
 			std::string input;
 			std::cin >> input;
 
+			// Check to see if user entered correct input
 			switch(toupper(input[0])) {
 				case 'U':
 					temp.row--;
@@ -64,6 +62,8 @@ void Maze::TakeTurn(Player *p) {
 				case 'R':
 					temp.col++;
 					break;
+				default:
+					std::cout << "Please enter your choice: ";
 			}
 			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 			move_suc = board_->MovePlayer(p, temp);
@@ -73,6 +73,7 @@ void Maze::TakeTurn(Player *p) {
 	else {
 		std::vector<Position> moves = board_->GetMoves(p);
 		int index = rand() % moves.size();
+		// If positions are available that are not running into another enemy, use those positions
 		while ((board_->get_square_value(moves[index]) == SquareType::Enemy1 ||
 			board_->get_square_value(moves[index]) == SquareType::Enemy2) &&
 			moves.size() > 1) {
@@ -96,9 +97,11 @@ Player* Maze::GetNextPlayer() {
 }
 
 bool Maze::IsGameOver() const {
+	// We've done it! Human is on the exit position
 	if (board_->GetExitOccupant() == SquareType::Human) {
 		return true;
 	}
+	// Save human to check against enemy position
 	Player *human = players_[0];
 
 	// Code no longer necessary since boards are checked for path
@@ -126,10 +129,11 @@ bool Maze::IsGameOver() const {
 std::string Maze::GenerateReport() const {
 	std::string output = "";
 	for (auto &p : players_) {
-		output += p->get_name() + " has " + std::to_string(p->get_points()) + " points.\n";
+		output += p->Stringify();
 	}
 	return output;
 }
+
 
 bool Maze::checkBoard(Player *p) {
 	std::vector<Position> moves = board_->GetMoves(p);

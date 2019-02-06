@@ -24,9 +24,8 @@ struct Position {
 
 class Player {
 public:
-	// Constructors
+	// Constructor
 	Player(const std::string name, const bool is_human);
-	Player(const std::string name, const bool is_human, SquareType char_image);
 	
 	// Inline Member Functions
 	std::string get_name() const {return name_; }

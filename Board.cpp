@@ -1,11 +1,16 @@
+// Justin Adkins
+// Board Implementation
+
 #include "Board.h"
 
+// Definitions for Probability and Points
 #define WALL_PROB 20
 #define TRES_PROB 10
 #define TRES_PTS1 100
 #define TRES_PTS2 75
 #define TRES_PTS3 50
 #define EXIT_PTS 200
+
 
 std::string SquareTypeStringify(SquareType sq) {
 	switch(sq) {
@@ -36,8 +41,10 @@ Board::Board() : rows_(ROW), cols_(COL) {
 	srand((time_t)ts.tv_nsec); // using nanosecond time to seed
 	for (int i = 0; i < rows_; i++) {
 		for (int j = 0; j < cols_; j++) {
-			bool wall = (rand() % 100) < WALL_PROB;
-			bool treasure = (rand() % 100) < TRES_PROB;
+			// setting equal to true if number is less than given probability
+			bool wall = (rand() % 100) <= WALL_PROB;
+			bool treasure = (rand() % 100) <= TRES_PROB;
+			// Array of treasure types to implement different treasures
 			SquareType tres[3] = {SquareType::Treasure1, SquareType::Treasure2, SquareType::Treasure3};
 			if (wall) {
 				arr_[i][j] = SquareType::Wall;
@@ -55,6 +62,7 @@ Board::Board() : rows_(ROW), cols_(COL) {
 	arr_[rows_ - 1][cols_ - 1] = SquareType::Exit;
 	won_ = false;
 
+	// Initialize all visted_ array to false
 	for (int i = 0; i < ROW; i++) {
 		for (int j = 0; j < COL; j++) {
 			visited_[i][j] = false;
@@ -167,6 +175,7 @@ std::ostream& operator<<(std::ostream& os, const Board &b) {
 	int rows = b.rows_;
 	int cols = b.cols_;
 
+	// Visualize the board by printing out each element in the 2D array to the terminal
 	for (int i = 0; i < rows; i++) {
 		for (int j = 0; j < cols; j++) {
 			os << SquareTypeStringify(b.arr_[i][j]);

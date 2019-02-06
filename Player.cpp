@@ -3,12 +3,17 @@
 
 #include "Player.h"
 
+// Constructor: defaults to human assignment
 Player::Player(const std::string name, const bool is_human) : name_(name), is_human_(is_human) {
-	char_image_ = SquareType::Human;
-	points_ = 0;
-}
-
-Player::Player(const std::string name, const bool is_human, SquareType char_image) : name_(name), is_human_(is_human), char_image_(char_image) {
+	// Array of different enemy types
+	SquareType enemy[2] = {SquareType::Enemy1, SquareType::Enemy2};
+	if (is_human) {
+		char_image_ = SquareType::Human;
+	}
+	else {
+		// Choose random character image
+		char_image_ = enemy[rand() % 2];
+	}
 	points_ = 0;
 }
 
@@ -41,7 +46,7 @@ std::string Player::ToRelativePosition(Position other) {
 }
 
 std::string Player::Stringify() {
-	return name_ + " " + std::to_string(points_);
+	return name_ + " has " + std::to_string(points_) + ".\n";
 }
 
 void Player::set_squaretype(SquareType char_image) {
