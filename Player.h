@@ -27,26 +27,19 @@ public:
 	// Constructor
 	Player(const std::string name, const bool is_human);
 	
-	// Inline Member Functions
+	// Setters & Getters
 	std::string get_name() const {return name_; }
 	int get_points() const {return points_; }
 	Position get_position() const {return pos_; }
 	bool is_human() const {return is_human_; }
 	SquareType get_squaretype() const {return char_image_; }
-
-	void ChangePoints(const int x);  
-
 	void SetPosition(Position pos);
-
-	// ToRelativePosition is a function we used to translate positions
-	// into directions relative to the player (up, down, etc)
-	std::string ToRelativePosition(Position other);
-
-	// Convert this player to a string representation of their name and points
-	std::string Stringify();
-
 	void set_squaretype(SquareType char_image);
 
+	// Public Methods
+	void ChangePoints(const int x);  
+	std::string ToRelativePosition(Position other);
+	std::string Stringify();
 private:
 	std::string name_;
 	int points_;

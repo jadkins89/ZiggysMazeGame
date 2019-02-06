@@ -1,3 +1,9 @@
+/** 
+	Justin Adkins
+ 	Main.cpp for Ziggy Maze Game
+ 	This game is currently arranged to be a one-player maze game.
+ 	Collect the treasure, get to the exit, and don't get overtaken by the bad guys!
+ */
 
 #include "Maze.h"
 

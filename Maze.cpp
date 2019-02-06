@@ -1,5 +1,8 @@
 #include "Maze.h"
 
+/**
+	Maze Constructor: inializes a board and a dummy player to check the board to make sure it is "winnable". Deletes dummy player after successful completion of search and initializes turn_count_ to zero.
+*/
 Maze::Maze() {
 	Board* new_board = new Board;
 	board_ = new_board;
@@ -20,6 +23,12 @@ Maze::Maze() {
 	turn_count_ = 0;
 }
 
+/**
+	NewGame places the human passed in as a parameter on the board and initializes the enemy players and places them on the board.
+
+	@param human: a pointer to the human player object
+	@param enemies: the number of enemies that need to be initialized 
+*/
 void Maze::NewGame(Player *human, const int enemies) {
 	// Place human on board
 	Position start = {0,0};
@@ -40,11 +49,23 @@ void Maze::NewGame(Player *human, const int enemies) {
 	}
 }
 
+/**
+	TakeTurn checks to see if the current turn is a human or an enemy's. 
+
+	If a human, it prompts the user for input and makes sure it is valid. If valid it saves the requested position move in a temp variable and calls the MovePlayer to request the move. If true, we continue on. Else, we prompt the user again because the move is illegal.
+
+	If an enemy, TakeTurn uses a random strategy that moves the enemy to a position that it can occupy "randomly". If it can avoid attempting to move into another enemy, it does so.
+
+	Lastly, the turn_count_ is incremented unless on the last player, then it is reset to zero.
+
+	@param p: A pointer to the player who is taking a turn
+*/
 void Maze::TakeTurn(Player *p) {
 	Position temp = p->get_position();
 	if (p->is_human()) {
 		bool move_suc = false;
 		do {
+			std::cout << "Please enter your choice: ";
 			std::string input;
 			std::cin >> input;
 
@@ -62,8 +83,6 @@ void Maze::TakeTurn(Player *p) {
 				case 'R':
 					temp.col++;
 					break;
-				default:
-					std::cout << "Please enter your choice: ";
 			}
 			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 			move_suc = board_->MovePlayer(p, temp);
@@ -91,11 +110,19 @@ void Maze::TakeTurn(Player *p) {
 	}
 }
 
+/**
+	GetNextPlayer is an accessor function that returns the player whose "turn" it is.
+*/
 Player* Maze::GetNextPlayer() {
 	return players_[turn_count_];
 
 }
 
+/**
+	IsGameOver is a method that checks to see if the game conditions have caused a "Game Over" scenario. It checks if the human is on the exit, and if the human has been overtaken by enemies.
+
+	@return: True if game is over, false otherwise
+*/
 bool Maze::IsGameOver() const {
 	// We've done it! Human is on the exit position
 	if (board_->GetExitOccupant() == SquareType::Human) {
@@ -104,14 +131,7 @@ bool Maze::IsGameOver() const {
 	// Save human to check against enemy position
 	Player *human = players_[0];
 
-	// Code no longer necessary since boards are checked for path
-
-	// std::vector<Position> moves = board_->GetMoves(human);
-	// if (!moves.size()) {
-	// 	std::cout << "NO POSSIBLE MOVES - GAME OVER" << std::endl;
-	// 	return true;
-	// }
-
+	// Checks all enemies positions against the human position
 	for (auto &e : players_) {
 		// Only looking for bad guys
 		if (e->is_human()) {
@@ -126,6 +146,11 @@ bool Maze::IsGameOver() const {
 	return false;
 }
 
+/**
+	GenerateReport steps through the player vector and builds a string containing their names and scores. A helper method of the Player class called Stringify is used to build each players portion.
+
+	@return string: This final string contains all the players and scores, each on a new line.
+*/
 std::string Maze::GenerateReport() const {
 	std::string output = "";
 	for (auto &p : players_) {
@@ -134,7 +159,12 @@ std::string Maze::GenerateReport() const {
 	return output;
 }
 
+/**
+	checkBoard is a recursive function whose goal is to check to see if the board is solvable. It works by having a player starting at the top left, try all possible positions from there until they hit the exit or have no more moves. Visited positions are marked to not double back.
 
+	@param p: A player pointer, which is used to move around the board.
+	@return: True if board is winnable, false otherwise.
+*/
 bool Maze::checkBoard(Player *p) {
 	std::vector<Position> moves = board_->GetMoves(p);
 	Player temp = *p;
@@ -159,7 +189,11 @@ bool Maze::checkBoard(Player *p) {
 	return false;
 }
 
+/**
+	Overloaded << operator so we can output the game based on its current state.
 
+	@return: a reference to an ostream that contains the output we've built based on game state.
+*/
 std::ostream& operator<<(std::ostream& os, const Maze &m) {
 	os << *m.board_;
 
@@ -167,18 +201,17 @@ std::ostream& operator<<(std::ostream& os, const Maze &m) {
 		os << m.players_[m.turn_count_]->get_name() << " can go: ";
 
 		std::vector<Position> moves = m.board_->GetMoves(m.players_[m.turn_count_]);
+		// Print all possible moves
 		for (auto &cur_move : moves) {
 			os << m.players_[m.turn_count_]->ToRelativePosition(cur_move) << " ";
 		}
 		os << std::endl;
-		if (m.players_[m.turn_count_]->is_human()) {
-			os << "Please enter your choice: ";
-		}
-		else {
+		if (!m.players_[m.turn_count_]->is_human()) {
 			std::cout << "Hit enter to continue...";
     		std::cin.get();
 		}
 	}
+	// Game Over scenarios, calls GenerateReport to output scores
 	else {
 		if (m.board_->get_won()) {
 			os << "🤩 YOU'VE WON! BRAVO ZIGGY 🤩" << std::endl;

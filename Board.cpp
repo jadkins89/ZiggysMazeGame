@@ -11,7 +11,12 @@
 #define TRES_PTS3 50
 #define EXIT_PTS 200
 
+/**
+	SquareTypeStringify takes a SquareType and returns an emoji for the specified SquareType.
 
+	@param sq: SquareType of specific element of board
+	@return: string containing the emoji
+*/
 std::string SquareTypeStringify(SquareType sq) {
 	switch(sq) {
 		case(SquareType::Wall):
@@ -35,6 +40,9 @@ std::string SquareTypeStringify(SquareType sq) {
 	}
 }
 
+/**
+	Board Constructor: Builds the board. Uses randomization to create unique boards. Two for loops are used to iterate through the 2D board space and place empty spaces, walls, and treasures. Lastly, the human and exit are placed. We also initialize the visted_ array to false for Board verification.
+*/
 Board::Board() : rows_(ROW), cols_(COL) {
 	struct timespec ts;
     clock_gettime(CLOCK_MONOTONIC, &ts);
@@ -70,19 +78,33 @@ Board::Board() : rows_(ROW), cols_(COL) {
 	}
 }
 
+/**
+	set_visited is an accessor method for checking if a specific space has been visited. This will be used by Maze when calling the checkBoard method.
+*/
 void Board::set_visited(int row, int col, bool val) {
 	visited_[row][col] = val;
 }
 
+/**
+	get_square_value is an accessor method for getting the SquareType of a specific position.
+*/
 SquareType Board::get_square_value(Position pos) const {
 	return arr_[pos.row][pos.col];
 }
 
-
+/**
+	SetSquareValue is an accessor method for setting the SquareType of a specific position.
+*/
 void Board::SetSquareValue(Position pos, SquareType value) {
 	arr_[pos.row][pos.col] = value;
 }
 
+/**
+	GetMoves finds the moves that are available to a specific player.
+
+	@param p: The player whose moves we are finding.
+	@return: A vector of positions that are viable for the player.
+*/
 std::vector<Position> Board::GetMoves(Player *p) { 
 	Position player_pos = p->get_position();
 
@@ -116,6 +138,13 @@ std::vector<Position> Board::GetMoves(Player *p) {
 	return list;
 }
 
+/**
+	MovePlayer attempts to change a players position and do various things based on the position they are moving into. If move is illegal it returns false, otherwise true.
+
+	@param p: A pointer to the player that is in motion
+	@param pos: The requested position they would like to move to
+	@return: True if successful move, false otherwise
+*/
 bool Board::MovePlayer(Player *p, Position pos) {
 	std::vector<Position> moves = GetMoves(p);
 	for (auto &m : moves) {
@@ -167,10 +196,16 @@ bool Board::MovePlayer(Player *p, Position pos) {
 	return false;
 }
 
+/**
+	GetExitOccupant is an accessor method for returning the SquareType that is currently set to the exit. This is useful for checking if the game has been won.
+*/
 SquareType Board::GetExitOccupant() {
 	return arr_[rows_-1][cols_-1];
 }
 
+/**
+	Overloaded << operator to output the image of the board. It loops through the SquareType 2D array and outputs them row by row.
+*/
 std::ostream& operator<<(std::ostream& os, const Board &b) {
 	int rows = b.rows_;
 	int cols = b.cols_;
